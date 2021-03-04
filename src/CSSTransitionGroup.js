@@ -183,27 +183,20 @@ export class CSSTransitionGroup extends Component {
 	renderChild = child => {
 		let { transitionName, transitionEnter, transitionLeave, transitionEnterTimeout, transitionLeaveTimeout } = this.props,
 			key = getKey(child);
-		return (
-			<CSSTransitionGroupChild
-				key={key}
-				ref={ c => {
-					if (!(this.refs[key] = c)) child = null;
-				}}
-				name={transitionName}
-				enter={transitionEnter}
-				leave={transitionLeave}
-				enterTimeout={transitionEnterTimeout}
-				leaveTimeout={transitionLeaveTimeout}>
-				{child}
-			</CSSTransitionGroupChild>
-		);
+		return h(CSSTransitionGroupChild, {
+			key,
+			ref: c => {
+				if (!(this.refs[key] = c)) child = null;
+			},
+			name: transitionName,
+			enter: transitionEnter,
+			leave: transitionLeave,
+			enterTimeout: transitionEnterTimeout,
+			leaveTimeout: transitionLeaveTimeout
+		}, child);
 	};
 
 	render({ component:Component, transitionName, transitionEnter, transitionLeave, transitionEnterTimeout, transitionLeaveTimeout, children:c, ...props }, { children }) {
-		return (
-			<Component {...props}>
-				{ filterNullChildren(toChildArray(children)).map(this.renderChild) }
-			</Component>
-		);
+		return h(Component, props, filterNullChildren(toChildArray(children)).map(this.renderChild));
 	}
 }
