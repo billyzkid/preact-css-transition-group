@@ -1,5 +1,5 @@
 export function getKey(vnode) {
-	return vnode.attributes && vnode.attributes.key;
+	return vnode.key;
 }
 
 export function getComponentBase(component) {

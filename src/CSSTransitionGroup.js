@@ -11,7 +11,7 @@
  */
 
 
-import { h, cloneElement, Component } from 'preact';
+import { h, cloneElement, Component, toChildArray } from 'preact';
 import { getKey, filterNullChildren } from './util';
 import { mergeChildMappings, isShownInChildren, isShownInChildrenByKey, inChildren, inChildrenByKey } from './TransitionChildMapping';
 import { CSSTransitionGroupChild } from './CSSTransitionGroupChild';
@@ -27,7 +27,7 @@ export class CSSTransitionGroup extends Component {
 		super();
 		this.refs = {};
 		this.state = {
-			children: (props.children || []).slice()
+			children: (props.children ? toChildArray(props.children) : []).slice()
 		};
 	}
 
@@ -42,10 +42,10 @@ export class CSSTransitionGroup extends Component {
 	}
 
 	componentWillReceiveProps({ children, exclusive, showProp }) {
-		let nextChildMapping = filterNullChildren(children || []).slice();
+		let nextChildMapping = filterNullChildren(children ? toChildArray(children) : []).slice();
 
 		// last props children if exclusive
-		let prevChildMapping = filterNullChildren(exclusive ? this.props.children : this.state.children);
+		let prevChildMapping = filterNullChildren(exclusive ? toChildArray(this.props.children) : this.state.children);
 
 		let newChildren = mergeChildMappings(
 			prevChildMapping,
@@ -118,7 +118,7 @@ export class CSSTransitionGroup extends Component {
 
 	_handleDoneEntering(key) {
 		delete this.currentlyTransitioningKeys[key];
-		let currentChildMapping = filterNullChildren(this.props.children),
+		let currentChildMapping = filterNullChildren(toChildArray(this.props.children)),
 			showProp = this.props.showProp;
 		if (!currentChildMapping || (
 			!showProp && !inChildrenByKey(currentChildMapping, key)
@@ -157,7 +157,7 @@ export class CSSTransitionGroup extends Component {
 	_handleDoneLeaving(key) {
 		delete this.currentlyTransitioningKeys[key];
 		let showProp = this.props.showProp,
-			currentChildMapping = filterNullChildren(this.props.children);
+			currentChildMapping = filterNullChildren(toChildArray(this.props.children));
 		if (showProp && currentChildMapping &&
 			isShownInChildrenByKey(currentChildMapping, key, showProp)) {
 			this.performEnter(key);
@@ -202,7 +202,7 @@ export class CSSTransitionGroup extends Component {
 	render({ component:Component, transitionName, transitionEnter, transitionLeave, transitionEnterTimeout, transitionLeaveTimeout, children:c, ...props }, { children }) {
 		return (
 			<Component {...props}>
-				{ filterNullChildren(children).map(this.renderChild) }
+				{ filterNullChildren(toChildArray(children)).map(this.renderChild) }
 			</Component>
 		);
 	}

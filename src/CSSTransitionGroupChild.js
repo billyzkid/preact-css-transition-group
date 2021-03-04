@@ -11,7 +11,7 @@
  */
 
 
-import { h, Component } from 'preact';
+import { h, Component, toChildArray } from 'preact';
 import { getComponentBase, onlyChild, requestAnimationFrame } from './util';
 import { addClass, removeClass } from './CSSCore';
 import { addEndEventListener, removeEndEventListener } from './TransitionEvents';
@@ -125,6 +125,6 @@ export class CSSTransitionGroupChild extends Component {
 	}
 
 	render() {
-		return onlyChild(this.props.children);
+		return onlyChild(toChildArray(this.props.children));
 	}
 }
